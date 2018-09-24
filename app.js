@@ -1,17 +1,22 @@
 const express = require('express');
+const cookieSession = require('cookie-session');
+const main = require('./pages/main').default;
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.contentType('html');
-    res.send("<html><head></head><body><h1>Hello from express</h1><h2>By Dharmendra</h2></body>")
-})
+app.use(cookieSession({
+    name: 'session',
+    keys: ['secreat'],
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
+
+app.use(express.json());       // to support JSON-encoded bodies
+app.use(express.urlencoded());
+
+app.get('/', main.controller);
+app.post('/addUser', main.addUser);
+app.post('/clear', main.clear);
+
 
 app.listen(3000, () => console.log("app is running on port 3000"));
-
-
-/**
- * Run by node app.js
- * or if you have pm2 installed in machine
- * pm2 start app.js (app.js path if not in same folder)
- */
